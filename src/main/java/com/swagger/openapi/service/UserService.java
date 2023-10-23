@@ -36,8 +36,8 @@ public class UserService {
             newUser.setSex(bodyUserPost.getSex());
             newUser.setSexual_orientation(bodyUserPost.getSexual_orientation());
             newUser.setPhysical_features(bodyUserPost.getPhysical_features());
-            //newUser.setBirth_date(bodyUserPost.getBirth_date());
-            //newUser.setMoney(bodyUserPost.getMoney());
+            newUser.setBirth_date(bodyUserPost.getBirth_date());
+            newUser.setMoney(bodyUserPost.getMoney());
             newUser = userRepository.save(newUser);
             return newUser;
         }
@@ -75,8 +75,8 @@ public class UserService {
             user.setSexual_orientation(bodyUserPut.getSexual_orientation());
             user.setSexual_orientation(bodyUserPut.getSexual_orientation());
             user.setPhysical_features(bodyUserPut.getPhysical_features());
-            //user.setBirth_date(bodyUserPut.getBirth_date());
-            //user.setMoney(bodyUserPut.getMoney());
+            user.setBirth_date(bodyUserPut.getBirth_date());
+            user.setMoney(bodyUserPut.getMoney());
             return userRepository.save(user);
         }
 

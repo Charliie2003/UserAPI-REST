@@ -1,11 +1,8 @@
 package com.swagger.openapi.service.validation;
 
-import com.swagger.openapi.service.dto.BodyUserPartialUpdate;
 import com.swagger.openapi.service.dto.BodyUserPost;
 import com.swagger.openapi.service.dto.BodyUserPut;
-import jakarta.validation.Valid;
 import org.springframework.stereotype.Component;
-import org.springframework.validation.annotation.Validated;
 
 import java.util.regex.Pattern;
 
