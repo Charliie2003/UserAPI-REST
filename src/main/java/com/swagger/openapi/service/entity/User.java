@@ -1,4 +1,5 @@
 package com.swagger.openapi.service.entity;
+import io.swagger.v3.oas.annotations.media.Schema;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.index.Indexed;
 import org.springframework.data.mongodb.core.mapping.Document;
@@ -20,6 +21,10 @@ public class User {
     private Date expireAt;
     private List<String> physical_features;
 
+    private Date birth_date;
+
+    private double money;
+
 
 
     public User() {
@@ -29,7 +34,7 @@ public class User {
     }
 
 
-    public User(String first_name, String second_name, String first_surname, String email, String sex, String sexual_orientation,Date expireAt, List<String> physical_features) {
+    public User(String first_name, String second_name, String first_surname, String email, String sex, String sexual_orientation,Date expireAt, List<String> physical_features, Date date_birth, double money) {
         this.id = UUID.randomUUID().toString(); // Genera un UUID único y lo asigna como el id
         this.first_name = first_name;
         this.second_name = second_name;
@@ -39,8 +44,8 @@ public class User {
         this.sexual_orientation = sexual_orientation;
         this.expireAt = expireAt;
         this.physical_features = physical_features;
-
-
+        this.birth_date = date_birth;
+        this.money = money;
 
     }
     // Getters y setters
@@ -117,6 +122,21 @@ public class User {
         this.physical_features = physical_features;
     }
 
+    public Date getBirth_date() {
+        return birth_date;
+    }
+
+    public void setBirth_date(Date birth_date) {
+        this.birth_date = birth_date;
+    }
+
+    public double getMoney() {
+        return money;
+    }
+
+    public void setMoney(double money) {
+        this.money = money;
+    }
 }
 
 

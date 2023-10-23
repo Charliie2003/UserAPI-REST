@@ -2,6 +2,7 @@ package com.swagger.openapi.service.dto;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.*;
+import org.springframework.format.annotation.DateTimeFormat;
 
 import java.util.Date;
 import java.util.List;
@@ -40,18 +41,21 @@ public class BodyUserPost {
     private String sex;
     @Schema(description = "Orientación sexual del usuario")
     @Size(max = 30, message = "The sexual orientation must be have 30 character max")
-    @NotBlank(message = "The sexual orientation is required (is blank)")
-    @NotNull(message = "The sexual orientation is required (is null)")
-    @NotEmpty(message = "The sexual orientation name is required (is empty)")
     private String sexual_orientation;
 
     @Schema(description = "Rasgos Físicos del usuario")
+    @Size(min = 3, max=15, message = "The sexual orientation must be have 30 character max")
     private List<String> physical_features;
 
-    /*@Schema(description = "Fecha de nacimiento del usuario")
+    @Schema(description = "Fecha de nacimiento del usuario")
+    @NotNull(message = "The graduation date is required.")
+    @Past(message = "The graduation date must be in the past.")
+    @DateTimeFormat(pattern = "yyyy-MM-dd")
     private Date birth_date;
+    @Max(value = 999999999)
     @Schema(description = "Dinero que contiene el usuario")
-    private double money;*/
+    @Positive
+    private double money;
 
 
     // Getters y setters
@@ -111,7 +115,7 @@ public class BodyUserPost {
     public void setPhysical_features(List<String> physical_features) {
         this.physical_features = physical_features;
     }
-/*
+
     public Date getBirth_date() {
         return birth_date;
     }
@@ -126,5 +130,5 @@ public class BodyUserPost {
 
     public void setMoney(double money) {
         this.money = money;
-    }*/
+    }
 }
