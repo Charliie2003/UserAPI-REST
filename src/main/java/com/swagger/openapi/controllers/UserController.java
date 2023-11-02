@@ -1,8 +1,5 @@
 package com.swagger.openapi.controllers;
 import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.github.fge.jsonpatch.JsonPatch;
 import com.github.fge.jsonpatch.JsonPatchException;
 import com.swagger.openapi.repository.UserRepository;
@@ -11,6 +8,7 @@ import com.swagger.openapi.service.UserService;
 import com.swagger.openapi.service.dto.BodyUserPost;
 import com.swagger.openapi.service.dto.BodyUserPut;
 import com.swagger.openapi.service.validation.UserNotFoundException;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -19,9 +17,6 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
-
-import java.nio.file.attribute.UserPrincipalNotFoundException;
-import java.util.List;
 
 @RestController
 @Validated
@@ -57,21 +52,11 @@ public class UserController {
 
     @PatchMapping(path= "/{idUser}", consumes = "application/json-patch+json")
     @Operation(summary = "Modifica parcialmente la información de un usuario por ID")
-    public ResponseEntity<User> partialUpdateUser(@Valid @PathVariable String idUser, @Valid @RequestBody JsonPatch patch) {
-        try {
-            User user = userRepository.findById(idUser).orElseThrow(UserNotFoundException::new);
-            User userPatched = userService.applyPatchToUser(patch, user);
-            userService.updateUserPatch(userPatched);
-            return ResponseEntity.ok(userPatched);
-        } catch (JsonPatchException | JsonProcessingException e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
-        } catch (UserNotFoundException e) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
-        }
-
-
+    public ResponseEntity<User> partialUpdateUser(@Valid @PathVariable String idUser, @Valid @RequestBody JsonPatch patch) throws JsonPatchException, JsonProcessingException {
+        User userPatched = userService.applyPatchToUser8080(idUser, patch);
+        userService.applyPatchToUser8081(idUser, patch);
+        return ResponseEntity.ok(userPatched);
     }
-
     @DeleteMapping("/{idUser}")
     @Operation(summary = "Elimina un usurio por su ID")
     public ResponseEntity<Void> deleteUserByID(@Valid @PathVariable String idUser){

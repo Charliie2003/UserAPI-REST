@@ -9,19 +9,6 @@ import java.util.regex.Pattern;
 @Component
 public class UserValidator {
 
-    /*public boolean patchIsValid(BodyUserPartialUpdate partialData) {
-        if (partialData == null) {
-            return false;
-        }
-        if (containsInvalidString(partialData.getFirst_name()) ||
-                containsInvalidString(partialData.getSecond_name()) ||
-                containsInvalidString(partialData.getFirst_surname()) ||
-                containsInvalidString(partialData.getEmail())) {
-            return false;
-        }
-        return true;
-    }*/
-
     public boolean postIsValid(BodyUserPost bodyUserPost) {
         if (bodyUserPost == null) {
             return false;
