@@ -1,4 +1,4 @@
-package com.swagger.openapi.controllers;
+package com.swagger.openapi.service.validation;
 
 import com.swagger.openapi.service.validation.UserNotFoundException;
 import org.springframework.http.HttpStatus;
