@@ -16,7 +16,6 @@ public class User {
     private String email;
     private String sex;
     private String sexual_orientation;
-    @Indexed(expireAfterSeconds = 86400)
     private Date expireAt;
     private List<String> physical_features;
 
