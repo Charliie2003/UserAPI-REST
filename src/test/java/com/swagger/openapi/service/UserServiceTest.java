@@ -16,6 +16,7 @@ import com.swagger.openapi.service.entity.User;
 import com.swagger.openapi.service.entity.UserPatch;
 import com.swagger.openapi.service.validation.UserNotFoundException;
 import com.swagger.openapi.service.validation.UserValidator;
+import io.swagger.v3.core.util.Json;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -339,38 +340,83 @@ class UserServiceTest {
         assertEquals(userPatch8081, result);
     }
 
-   @Test
-   public void patchApply8081() throws IOException, JsonPatchException {
-       String idUser = "123";
-       String patchString = "[{\"op\": \"replace\", \"path\": \"/first_name\", \"value\": \"Jane\"}]";
-       JsonPatch patch = JsonPatch.fromJson(new ObjectMapper().readTree(patchString));
 
-       ResponseEntity<UserPatch> myEntity = new ResponseEntity<>(userPatch8081, HttpStatus.OK);
+    @Test
+    void applyPatchToUser8081_ShouldUpdateUser_WhenUserExists() throws JsonPatchException, IOException {
+        // Preparar
+        String idUser = "123";
+        String patchString = "[{\"op\": \"replace\", \"path\": \"/first_name\", \"value\": \"Jane\"}]";
+        JsonPatch patch = JsonPatch.fromJson(new ObjectMapper().readTree(patchString));
+        String url = "http://localhost:8081/users/" + idUser;
 
-       when(restTemplate.exchange(
-               anyString(),
-               eq(HttpMethod.GET),
-               any(),
-               eq(UserPatch.class))
-       ).thenReturn(myEntity);
+        // Configurar mocks
+        when(restTemplate.exchange(
+                eq(url),
+                eq(HttpMethod.GET),
+                any(),
+                eq(UserPatch.class))
+        ).thenReturn(new ResponseEntity<>(userPatch8081, HttpStatus.OK));
 
-       when(userService.getUserByIdFrom8081(idUser)).thenReturn(userPatch8081);
+        JsonNode patchedNode = new ObjectMapper().convertValue(userPatch8081, JsonNode.class);
+        when(objectMapper.convertValue(any(UserPatch.class), eq(JsonNode.class))).thenReturn(patchedNode);
+
+        ResponseEntity<UserPatch> responseEntity = new ResponseEntity<>(userPatch8081, HttpStatus.OK);
+        when(restTemplate.exchange(
+                eq(url),
+                eq(HttpMethod.PUT),
+                any(HttpEntity.class),
+                eq(UserPatch.class))
+        ).thenReturn(responseEntity);
+
+        // Ejecutar
+        userService.applyPatchToUser8081(idUser, patch);
 
 
-       JsonNode userNode = objectMapper.convertValue(userPatch8081, JsonNode.class);
-       HttpEntity<JsonNode> requestEntity = new HttpEntity<>(userNode);
+        // Verificar
+        verify(restTemplate).exchange(
+                eq(url),
+                eq(HttpMethod.PUT),
+                any(HttpEntity.class),
+                eq(UserPatch.class));
 
-       ResponseEntity<UserPatch> mockResponse = new ResponseEntity<>(userPatch8081, HttpStatus.OK);
-       when(restTemplate.exchange(
-               eq("http://localhost:8081/users/" + idUser),
-               eq(HttpMethod.PUT),
-               eq(requestEntity),
-               eq(UserPatch.class)
-       )).thenReturn(mockResponse);
+    }
+    @Test
+    void applyPatchToUser8081_ShouldThrowUserNotFoundException_WhenUserNotFound() throws IOException {
 
-       userService.applyPatchToUser8081(idUser, patch);
+        String idUser = "123";
+        String patchString = "[{\"op\": \"replace\", \"path\": \"/first_name\", \"value\": \"Jane\"}]";
+        JsonPatch patch = JsonPatch.fromJson(new ObjectMapper().readTree(patchString));
+        String url = "http://localhost:8081/users/" + idUser;
+        // Configurar mocks
+        when(restTemplate.exchange(
+                eq(url),
+                eq(HttpMethod.GET),
+                any(),
+                eq(UserPatch.class))
+        ).thenReturn(new ResponseEntity<>(userPatch8081, HttpStatus.OK));
 
-   }
+        JsonNode patchedNode = new ObjectMapper().convertValue(userPatch8081, JsonNode.class);
+        when(objectMapper.convertValue(any(UserPatch.class), eq(JsonNode.class))).thenReturn(patchedNode);
+
+        ResponseEntity<UserPatch> responseEntity = new ResponseEntity<>(userPatch8081, HttpStatus.NOT_FOUND);
+        when(restTemplate.exchange(
+                eq(url),
+                eq(HttpMethod.PUT),
+                any(),
+                eq(UserPatch.class))
+        ).thenReturn(responseEntity);
+
+        assertThrows(UserNotFoundException.class, () -> userService.applyPatchToUser8081(idUser, patch));
+        // Verificar
+        verify(restTemplate).exchange(
+                eq(url),
+                eq(HttpMethod.PUT),
+                any(HttpEntity.class),
+                eq(UserPatch.class));
+
+    }
+
+
 
 
 }

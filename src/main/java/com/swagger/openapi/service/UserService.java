@@ -83,7 +83,7 @@ public class UserService {
             // El usuario no se encontró en la API en el puerto 8080
         return null;
     }
-    public void applyPatchToUser8081(String idUser, JsonPatch patch) throws JsonPatchException {
+    public void applyPatchToUser8081(String idUser, JsonPatch patch) throws JsonPatchException, UserNotFoundException {
         String url = baseURL8081 + idUser;
 
         // Obtén el usuario existente
