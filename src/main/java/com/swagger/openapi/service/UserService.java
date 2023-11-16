@@ -15,7 +15,6 @@ import com.swagger.openapi.service.validation.UserValidator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.*;
 import org.springframework.stereotype.Service;
-import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.RestTemplate;
 
 import java.util.Calendar;
@@ -77,14 +76,11 @@ public class UserService {
     //PATCH USER 8081
     public UserPatch getUserByIdFrom8081(String idUser) {
         String url = baseURL8081 + idUser;
-        try {
             ResponseEntity<UserPatch> response = restTemplate.exchange(url, HttpMethod.GET, null, UserPatch.class);
             if (response.getStatusCode() == HttpStatus.OK) {
                 return response.getBody();
             }
-        } catch (HttpClientErrorException.NotFound e) {
             // El usuario no se encontró en la API en el puerto 8080
-        }
         return null;
     }
     public void applyPatchToUser8081(String idUser, JsonPatch patch) throws JsonPatchException {
@@ -97,14 +93,13 @@ public class UserService {
             // Convierte el JsonPatch a una representación JSON
             JsonNode patchNode = patch.apply(objectMapper.convertValue(user, JsonNode.class));
             HttpEntity<JsonNode> requestEntity = new HttpEntity<>(patchNode);
-
-            try {
             ResponseEntity<UserPatch> responseEntity = restTemplate.exchange(url, HttpMethod.PUT, requestEntity,UserPatch.class);
-
-            } catch (HttpClientErrorException e) {
-                //error
+            if(responseEntity.getStatusCode() == HttpStatus.NOT_FOUND){
+                throw new UserNotFoundException();
             }
         }
+
+
     }
 
 

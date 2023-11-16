@@ -64,11 +64,11 @@ public class UserValidator {
 
     }
 
-    private boolean containsInvalidString(String str) {
+    public boolean containsInvalidString(String str) {
         return str != null && str.trim().equalsIgnoreCase("string");
     }
 
-    private boolean isValidEmail(String email) {
+    public boolean isValidEmail(String email) {
         // Patrón de expresión regular para verificar una dirección de correo electrónico
         String emailPattern = "^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}$";
         return Pattern.matches(emailPattern, email);
