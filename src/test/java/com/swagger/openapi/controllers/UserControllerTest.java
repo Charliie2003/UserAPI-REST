@@ -35,8 +35,6 @@ class UserControllerTest {
     @Mock
     private UserService userService;
 
-    @Mock
-    private UserRepository userRepository;
 
     @InjectMocks
     private UserController userController;
@@ -75,6 +73,7 @@ class UserControllerTest {
         assertEquals(HttpStatus.OK, response.getStatusCode());
         assertEquals(user, response.getBody());
     }
+    //GET
     @Test
     public void whenGetUserWithValidId_thenUserIsReturned() {
         String idUser = user.getId();
@@ -87,7 +86,7 @@ class UserControllerTest {
         assertEquals(HttpStatus.OK, response.getStatusCode());
         assertEquals(user, response.getBody());
     }
-    //GET
+
     @Test
     public void whenGetUserWithInvalidId_thenNotFound() {
         String idUser = "423";

@@ -243,7 +243,7 @@ class UserServiceTest {
 
         verify(userRepository, never()).delete(any(User.class));
     }
-
+    //PATCH USER 8080
     @Test
     public void testUpdateUserPatch() {
         user.setFirst_name("Charlie");
@@ -257,7 +257,7 @@ class UserServiceTest {
 
     }
 
-//PATCH USER 8080
+
     @Test
     void applyPatchToUser_ShouldUpdateUser() throws JsonPatchException, IOException {
         //Crear un JsonPatch para la prueba
