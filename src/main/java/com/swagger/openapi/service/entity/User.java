@@ -19,6 +19,7 @@ public class User {
     private Date expireAt;
     private List<String> physical_features;
 
+
     private Date birth_date;
 
     private double money;

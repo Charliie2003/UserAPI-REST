@@ -12,13 +12,15 @@ import com.swagger.openapi.service.dto.BodyUserPut;
 import com.swagger.openapi.service.entity.UserPatch;
 import com.swagger.openapi.service.validation.UserNotFoundException;
 import com.swagger.openapi.service.validation.UserValidator;
+import org.apache.commons.lang3.RandomStringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.*;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
-import java.util.Calendar;
-import java.util.Date;
+import java.time.LocalDate;
+import java.time.ZoneId;
+import java.util.*;
 
 @Service
 public class UserService {
@@ -36,7 +38,8 @@ public class UserService {
 
     private final String baseURL8081 = "http://localhost:8081/users/";
 
-
+    private final Random random = new Random();
+    private final GenerateRandoom generateRandoom = new GenerateRandoom();
 
     //POST
     public User createUser(BodyUserPost bodyUserPost) {
@@ -57,6 +60,39 @@ public class UserService {
         return null;
     }
 
+    //POST LOAD USER
+    public User loadUser() {
+        User newUser = new User();
+
+        // Generar datos aleatorios
+        newUser.setFirst_name(generateRandoom.generateRandomString());
+        newUser.setSecond_name(generateRandoom.generateRandomString());
+        newUser.setFirst_surname(generateRandoom.generateRandomString());
+        newUser.setEmail(generateRandoom.generateRandomString() + "@example.com");
+        newUser.setSex(generateRandoom.generateRandomSex());
+        newUser.setSexual_orientation(generateRandoom.generateSexualOrientation());
+        newUser.setPhysical_features(generateRandoom.generateRandomPhysicalFeatures());
+        newUser.setBirth_date(generateRandoom.generateRandomBirthDate());
+        newUser.setMoney(random.nextInt(10000)); // Ejemplo: número aleatorio hasta 10000
+
+        // Validar y guardar el usuario
+        if (userValidator.isValid(newUser)) {
+            return userRepository.save(newUser);
+        }
+        return null;
+    }
+
+    public List<User> createRandomUsers(int numberOfUsers) {
+        List<User> users = new ArrayList<>();
+        for (int i = 0; i < numberOfUsers; i++) {
+            User newUser = loadUser();
+            if (newUser != null) {
+                users.add(newUser);
+            }
+        }
+        return users;
+    }
+
     //PATCH USER 8080
 
     public User applyPatchToUser(JsonPatch patch, User user) throws JsonPatchException, JsonProcessingException {
@@ -67,22 +103,25 @@ public class UserService {
     public void updateUserPatch(User updatedUser) {
         userRepository.save(updatedUser);
     }
+
     public User applyPatchToUser8080(String idUser, JsonPatch patch) throws JsonPatchException, JsonProcessingException {
         User user = userRepository.findById(idUser).orElseThrow(UserNotFoundException::new);
         User userPatched = applyPatchToUser(patch, user);
         updateUserPatch(userPatched);
         return userPatched;
     }
+
     //PATCH USER 8081
     public UserPatch getUserByIdFrom8081(String idUser) {
         String url = baseURL8081 + idUser;
-            ResponseEntity<UserPatch> response = restTemplate.exchange(url, HttpMethod.GET, null, UserPatch.class);
-            if (response.getStatusCode() == HttpStatus.OK) {
-                return response.getBody();
-            }
-            // El usuario no se encontró en la API en el puerto 8080
+        ResponseEntity<UserPatch> response = restTemplate.exchange(url, HttpMethod.GET, null, UserPatch.class);
+        if (response.getStatusCode() == HttpStatus.OK) {
+            return response.getBody();
+        }
+        // El usuario no se encontró en la API en el puerto 8080
         return null;
     }
+
     public void applyPatchToUser8081(String idUser, JsonPatch patch) throws JsonPatchException, UserNotFoundException {
         String url = baseURL8081 + idUser;
 
@@ -93,8 +132,8 @@ public class UserService {
             // Convierte el JsonPatch a una representación JSON
             JsonNode patchNode = patch.apply(objectMapper.convertValue(user, JsonNode.class));
             HttpEntity<JsonNode> requestEntity = new HttpEntity<>(patchNode);
-            ResponseEntity<UserPatch> responseEntity = restTemplate.exchange(url, HttpMethod.PUT, requestEntity,UserPatch.class);
-            if(responseEntity.getStatusCode() == HttpStatus.NOT_FOUND){
+            ResponseEntity<UserPatch> responseEntity = restTemplate.exchange(url, HttpMethod.PUT, requestEntity, UserPatch.class);
+            if (responseEntity.getStatusCode() == HttpStatus.NOT_FOUND) {
                 throw new UserNotFoundException();
             }
         }
@@ -106,7 +145,7 @@ public class UserService {
     //GET
     public User getUserById(String idUser) {
         User user = userRepository.findById(idUser).orElse(null);
-        if (user != null ) {
+        if (user != null) {
             // El usuario es válido, puedes devolverlo , pero se le añade 1 día as al TTL
             Calendar calendar = Calendar.getInstance();
             calendar.setTime(user.getExpireAt());

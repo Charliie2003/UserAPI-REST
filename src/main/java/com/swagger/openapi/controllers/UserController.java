@@ -18,6 +18,9 @@ import org.springframework.web.bind.annotation.*;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 
+import java.util.ArrayList;
+import java.util.List;
+
 @RestController
 @Validated
 @RequestMapping("/users")
@@ -29,11 +32,18 @@ public class UserController {
     @Autowired
     private UserService userService;
 
+
     @PostMapping("/")
     @Operation(summary = "Crea un usuario asignandole una UUID y un TTL")
     public ResponseEntity<User> createUser(@Valid @RequestBody BodyUserPost bodyUserPost) {
         User newUser = userService.createUser(bodyUserPost);
         return ResponseEntity.ok(newUser);
+    }
+    @PostMapping("/{numberOfUsers}")
+    @Operation(summary = "Crea una cantidad de usuarios aleatorios")
+    public ResponseEntity<List<User>> loadPost(@PathVariable int numberOfUsers) {
+        List<User> createdUsers = userService.createRandomUsers(numberOfUsers);
+        return ResponseEntity.ok(createdUsers);
     }
     @GetMapping("/{idUser}")
     @Operation(summary = "Obtiene la información de usuario por ID")
