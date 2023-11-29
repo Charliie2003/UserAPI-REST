@@ -3,6 +3,7 @@ package com.swagger.openapi.service.validation;
 import com.swagger.openapi.service.UserService;
 import com.swagger.openapi.service.dto.BodyUserPost;
 import com.swagger.openapi.service.dto.BodyUserPut;
+import com.swagger.openapi.service.entity.User;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -26,10 +27,20 @@ public class UserValidatorTest {
     @Mock
     private BodyUserPut bodyUserPut;
 
+    private User user;
+
 
     @BeforeEach
     void setUp() {
-
+        user = new User();
+        // Configurar un usuario válido
+        user.setFirst_name("John");
+        user.setSecond_name("Doe");
+        user.setFirst_surname("Smith");
+        user.setEmail("john@example.com");
+        user.setSex("Male");
+        user.setSexual_orientation("Heterosexual");
+        user.setMoney(100.0);
     }
     //  InvalidString
     @Test
@@ -210,6 +221,44 @@ public class UserValidatorTest {
         assertTrue(result);
 
         verify(bodyUserPost).setEmail(initialEmail + ".com");
+    }
+    //POST LOADUSERS
+
+    @Test
+    public void testIsValidWithNullUser() {
+        assertFalse(userValidator.isValid(null));
+    }
+
+    @Test
+    public void testIsValidWithInvalidFields() {
+        user.setFirst_name("string"); // Campo inválido
+        assertFalse(userValidator.isValid(user));
+    }
+
+    @Test
+    public void testIsValidWithInvalidEmail() {
+        user.setEmail("john@invalid"); // Email inválido
+        assertTrue(userValidator.isValid(user));
+        assertEquals("john@invalid.com", user.getEmail());
+    }
+
+    @Test
+    public void testIsValidWithHotmailEmail() {
+        user.setEmail("john@hotmail.com");
+        userValidator.isValid(user);
+        assertEquals(200.0, user.getMoney());
+    }
+
+    @Test
+    public void testIsValidWithOutlookEmail() {
+        user.setEmail("john@outlook.com");
+        userValidator.isValid(user);
+        assertEquals(50.0, user.getMoney());
+    }
+
+    @Test
+    public void testIsValidWithValidUser() {
+        assertTrue(userValidator.isValid(user));
     }
 
 

@@ -8,7 +8,10 @@ import java.time.ZoneId;
 import java.util.*;
 
 public class GenerateRandoom {
-    private final Random random = new Random();
+    private Random random = new Random();
+    public GenerateRandoom(Random random) {
+        this.random = random;
+    }
 
     public List<String> generateRandomPhysicalFeatures() {
         int numberOfFeatures = 3; // Por ejemplo, generar 3 características físicas

@@ -39,7 +39,7 @@ public class UserService {
     private final String baseURL8081 = "http://localhost:8081/users/";
 
     private final Random random = new Random();
-    private final GenerateRandoom generateRandoom = new GenerateRandoom();
+    private final GenerateRandoom generateRandoom = new GenerateRandoom(random);
 
     //POST
     public User createUser(BodyUserPost bodyUserPost) {

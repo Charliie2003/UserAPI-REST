@@ -20,8 +20,10 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
+import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
@@ -72,6 +74,25 @@ class UserControllerTest {
 
         assertEquals(HttpStatus.OK, response.getStatusCode());
         assertEquals(user, response.getBody());
+    }
+    //POST LOADUSERS
+    @Test
+    public void testLoadPost() {
+        int numberOfUsers = 5;
+        List<User> mockUsers = new ArrayList<>();
+        for (int i = 0; i < numberOfUsers; i++) {
+            mockUsers.add(new User()); // Añade usuarios simulados a la lista
+        }
+
+        // Configurar el mock de userService para devolver la lista de usuarios simulados
+        when(userService.createRandomUsers(numberOfUsers)).thenReturn(mockUsers);
+
+        // Llamar al método loadPost
+        ResponseEntity<List<User>> response = userController.loadPost(numberOfUsers);
+
+        // Verificar que la respuesta es correcta
+        assertEquals(200, response.getStatusCodeValue());
+        assertEquals(numberOfUsers, response.getBody().size());
     }
     //GET
     @Test
