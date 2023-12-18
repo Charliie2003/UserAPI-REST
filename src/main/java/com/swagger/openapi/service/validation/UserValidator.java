@@ -11,6 +11,39 @@ import java.util.regex.Pattern;
 
 @Component
 public class UserValidator {
+    public boolean isValid(User user) {
+        if (user == null) {
+            return false;
+        }
+        if (containsInvalidString(user.getFirst_name()) ||
+                containsInvalidString(user.getSecond_name()) ||
+                containsInvalidString(user.getFirst_surname()) ||
+                containsInvalidString(user.getEmail()) ||
+                containsInvalidString(user.getSex()) ||
+                containsInvalidString(user.getSexual_orientation())) {
+            return false;
+        }
+
+        // Validar y corregir el correo electrónico
+        String email = user.getEmail();
+        if (!isValidEmail(email)) {
+            // Agregar ".com" al final si no está presente
+            email += ".com";
+            user.setEmail(email);
+        }
+
+        // Verifica si el correo acaba con "hotmail" o "outlook"
+        double money = user.getMoney();
+        if (email.endsWith("hotmail.com")) {
+            // Multiplica money x2
+            user.setMoney(money * 2);
+        } else if (email.endsWith("outlook.com")) {
+            // Divide money entre 2
+            user.setMoney(money / 2);
+        }
+
+        return true;
+    }
 
     public boolean postIsValid(BodyUserPost bodyUserPost) {
         String email;

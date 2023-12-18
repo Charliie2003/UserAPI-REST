@@ -7,7 +7,7 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.github.fge.jsonpatch.JsonPatch;
 import com.github.fge.jsonpatch.JsonPatchException;
-
+import java.time.LocalDate;
 
 import com.swagger.openapi.repository.UserRepository;
 import com.swagger.openapi.service.dto.BodyUserPost;
@@ -35,6 +35,8 @@ import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.RestTemplate;
 
 import java.io.IOException;
+import java.time.LocalDate;
+import java.time.ZoneId;
 import java.util.*;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -58,7 +60,10 @@ class UserServiceTest {
     private RestTemplate restTemplate;
 
     private User user;
+    @Mock
+    private GenerateRandoom generateRandoom;
 
+    private Random random;
 
     private UserPatch userPatch8081;
 
@@ -75,7 +80,7 @@ class UserServiceTest {
         user.setFirst_surname("Smith");
         user.setEmail("john.doe@example.com");
         user.setSex("Male");
-        user.setSexual_orientation("Heterosexual");
+        user.setSexual_orientation("HeteroSexual");
         user.setPhysical_features(Arrays.asList("Tall", "Slim", "Athletic"));
         user.setBirth_date(new Date());
         user.setExpireAt(new Date(System.currentTimeMillis() + 3600000));
@@ -86,6 +91,9 @@ class UserServiceTest {
         userPatch8081.setSecond_name("Doe");
         userPatch8081.setFirst_surname("Smith");
         userPatch8081.setEmail("john.doe@example.com");
+        generateRandoom = new GenerateRandoom(random);
+        random = mock(Random.class);
+
 
     }
 
@@ -108,7 +116,6 @@ class UserServiceTest {
 
         assertNotNull(createdUser); // El usuario creado no debe ser nulo
     }
-
     @Test
     void testCreateUserNull() {
         BodyUserPost invalidUserPost = new BodyUserPost();
@@ -123,6 +130,41 @@ class UserServiceTest {
         verify(userRepository, never()).save(any(User.class));
         assertNull(createdUser); // el usuario debe ser nulo
     }
+    //POST LOADUSERS
+
+    @Test
+    public void testLoadUser() {
+        // Configurar los mocks antes de llamar a loadUser
+        when(userValidator.isValid(any(User.class))).thenReturn(true);
+        User expectedUser = new User();
+        when(userRepository.save(any(User.class))).thenReturn(expectedUser);
+
+        // Llamar al método loadUser
+        User loadUser = userService.loadUser();
+
+        // Verificar que el método save de userRepository fue llamado
+        verify(userRepository).save(any(User.class));
+
+        // Asegurarse de que el resultado no es nulo
+        assertNotNull(loadUser);
+    }
+
+
+    @Test
+    public void testCreateRandomUsers() {
+        int numberOfUsers = 5;
+        User mockUser = new User(); // Asumiendo que tienes una clase User
+        when(userService.loadUser()).thenReturn(mockUser);
+
+        List<User> users = userService.createRandomUsers(numberOfUsers);
+
+        verify(userService, times(numberOfUsers)).loadUser();
+        assertEquals(numberOfUsers, users.size());
+        for (User user : users) {
+            assertEquals(mockUser, user); // Verifica que todos los usuarios son el usuario simulado
+        }
+    }
+
 
     //GET
     @Test
