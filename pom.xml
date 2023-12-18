@@ -10,7 +10,7 @@
 	</parent>
 	<groupId>com.swagger</groupId>
 	<artifactId>openapi</artifactId>
-	<version>0.0.1-SNAPSHOT</version>
+	<version>0.0.1</version>
 	<name>openapi</name>
 	<description>Demo project for Spring Boot Open Api</description>
 	<properties>
@@ -85,9 +85,6 @@
 			<artifactId>commons-lang3</artifactId>
 			<version>3.12.0</version> <!-- Asegúrate de usar la última versión disponible -->
 		</dependency>
-
-
-
 	</dependencies>
 	<build>
 		<plugins>
