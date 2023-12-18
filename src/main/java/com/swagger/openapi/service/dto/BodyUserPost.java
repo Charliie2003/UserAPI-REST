@@ -64,7 +64,7 @@ public class BodyUserPost {
         return first_name;
     }
 
-    public void setFirst_name(String first_name) {
+   public void setFirst_name(String first_name) {
         this.first_name = first_name;
     }
 
@@ -80,7 +80,7 @@ public class BodyUserPost {
         return first_surname;
     }
 
-    public void setFirst_surname(String first_surname) {
+   public void setFirst_surname(String first_surname) {
         this.first_surname = first_surname;
     }
 
@@ -120,7 +120,7 @@ public class BodyUserPost {
         return birth_date;
     }
 
-    public void setBirth_date(Date birth_date) {
+   public void setBirth_date(Date birth_date) {
         this.birth_date = birth_date;
     }
 

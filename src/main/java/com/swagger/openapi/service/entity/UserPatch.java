@@ -6,12 +6,19 @@ import org.springframework.data.mongodb.core.mapping.Document;
 @Document(collection = "users")
 public class UserPatch {
 
-
+    private String Id;
     private String first_name;
     private String second_name;
     private String first_surname;
     private String email;
 
+    public String getId() {
+        return Id;
+    }
+
+    public void setId(String id) {
+        Id = id;
+    }
 
     public String getFirst_name() {
         return first_name;

@@ -16,7 +16,6 @@ public class User {
     private String email;
     private String sex;
     private String sexual_orientation;
-    @Indexed(expireAfterSeconds = 86400)
     private Date expireAt;
     private List<String> physical_features;
 
@@ -33,20 +32,6 @@ public class User {
     }
 
 
-    public User(String first_name, String second_name, String first_surname, String email, String sex, String sexual_orientation,Date expireAt, List<String> physical_features, Date date_birth, double money) {
-        this.id = UUID.randomUUID().toString(); // Genera un UUID único y lo asigna como el id
-        this.first_name = first_name;
-        this.second_name = second_name;
-        this.first_surname = first_surname;
-        this.email = email;
-        this.sex = sex;
-        this.sexual_orientation = sexual_orientation;
-        this.expireAt = expireAt;
-        this.physical_features = physical_features;
-        this.birth_date = date_birth;
-        this.money = money;
-
-    }
     // Getters y setters
 
     public String getId() {
